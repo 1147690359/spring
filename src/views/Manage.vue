@@ -32,6 +32,11 @@
               <span slot="title">数据管理2</span>
             </el-menu-item>
           </el-submenu>
+
+          <el-menu-item  @click="exit">
+            <i class="el-icon-menu"></i>
+            <span slot="title">退出登录</span>
+          </el-menu-item>
         </el-menu>
       </el-col>
 
@@ -53,14 +58,20 @@ export default {
       return this.$route.path.replace("/","");
     }
   },
-  created() {
-    this.me = JSON.parse(localStorage.getItem("me"));
-  },
+
   data() {
     return {
       me: {},
     };
   },
+  methods:{
+    exit(){
+       localStorage.removeItem('token');
+       location.reload();
+
+    },
+
+  }
 };
 </script>
 

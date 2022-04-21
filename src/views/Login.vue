@@ -25,7 +25,10 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">登 录</el-button>
+        <el-button type="primary" 
+        @click="onSubmit"
+        
+        >登 录</el-button>
         <el-button>取消</el-button>
       </el-form-item>
     </el-form>
@@ -36,6 +39,7 @@
 export default {
   data() {
     return {
+      sccessToke:'',
       login: {
         username: "",
         password: "",
@@ -61,9 +65,13 @@ export default {
         .post("/api/index", this.login)
         .then((res) => {
           
-          // alert(res.data.index)
           if (res.data.index == "have") {
+
+            const sccessToke=res.data.sccessToke;
+            localStorage.setItem('token',sccessToke);
             
+            
+
             this.$router.push("/manage")
           }else if(res.data.index == "null"){
               alert("账号或者密码不正确");

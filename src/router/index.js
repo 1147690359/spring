@@ -15,18 +15,12 @@ const routes = [
     component: () => import('../views/Login.vue'),
     meta: { auth: false }
   },
-
-  // {
-  //   path: '/jump1',
-  //   name: 'Page1',
-  //   component: () => import('../views/Page1.vue'),
-  //   meta: { auth: false }
-  // },
    
   {
     path: '/manage',
     name: 'Manage',
     component: () => import('../views/Manage.vue'),
+    mata:{authRequired: true },
     children: [
       {
         path: '',
@@ -56,6 +50,12 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to,form,next)=>{
+  const token= localStorage.getItem('token');
+  if (to.name !=='Login' && !token) next({name: 'Login' }) 
+  else next()
 })
 
 export default router

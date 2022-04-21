@@ -361,6 +361,7 @@ export default {
        .get(`/api/selectByName?selectByName=${this.selectByName}&begin=${begin}&size=${this.size}`)
         .then((response) => {
           this.tableData = response.data
+          
         })
         .catch((error) => {
           console.log(error);
