@@ -227,6 +227,7 @@ export default {
   },
     data() {
       return {
+        selectSize:'',
         update:{
           outerVisible: false,
           innerVisible: false,
@@ -305,16 +306,37 @@ export default {
  * 删除数据
  */
       handleDelete(row) {
+        
+         this.selectBy();
+
          this.$axios
        .delete(`/api/userDelete/${row}`)
         .then((response) => {
           if(response.data.del==="have"){
-            alert("删除成功");
+           
 
-            this.selectBy();
-            // location.reload();  //刷新当前页面
 
-          }else{
+            if(this.selectSize == 1)
+            {
+                 this.page=this.page-1;
+            }
+            // this.select();
+            
+             alert("删除成功");
+
+             this.select();
+              this.selectBy();
+
+          }else if(response.data.del==="null"){
+             if(this.selectSize == 0){
+                 this.page=this.page-1;
+            }
+            alert("删除失败，该数据已经被删除");
+
+             this.select();
+              this.selectBy();
+          }
+          else {
             alert("系统出错啦，请联系管理员");
           }      
         })
@@ -361,7 +383,7 @@ export default {
        .get(`/api/selectByName?selectByName=${this.selectByName}&begin=${begin}&size=${this.size}`)
         .then((response) => {
           this.tableData = response.data
-          
+          this.selectSize=response.data.length;
         })
         .catch((error) => {
           console.log(error);
@@ -396,7 +418,12 @@ export default {
             this.selectBy();
             this.outerVisible=false;
             this.innerVisible=false;
-            this.form='';
+            
+            this.form.username='',
+            this.form.password='',
+            this.form.name='',
+            this.form.address=''
+            
           }else{
             alert("添加失败");
           }
