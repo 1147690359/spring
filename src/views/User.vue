@@ -36,6 +36,11 @@
                 <el-form-item label="地址:">
                   <el-input v-model="form.address"  placeholder="请输入家庭住址"></el-input>
                 </el-form-item>
+                <el-form-item label="邮箱:">
+                  <el-input v-model="form.email"  placeholder="请输入邮箱地址"></el-input>
+                </el-form-item>
+
+                
 
               </el-form>
             </div>
@@ -58,6 +63,9 @@
                 <el-form-item label="地址:">
                   <el-input v-model="form.address"  placeholder="请输入家庭住址" :readonly="true" ></el-input>
                 </el-form-item>
+                <el-form-item label="邮箱:">
+                  <el-input v-model="form.email"  placeholder="请输入邮箱" :readonly="true" ></el-input>
+                </el-form-item>
                 
                 <el-button @click="innerVisible = false" style="margin-left:320px;">取 消</el-button>
                 <el-form-item>
@@ -79,7 +87,7 @@
     style="width: 100%">
     <el-table-column
       label="id"
-      width="180">
+      width="100">
       <template slot-scope="scope">
         <!-- <i class="el-icon-time"></i> -->
         <span style="margin-left: 10px">{{ scope.row.id }}</span>
@@ -104,6 +112,8 @@
       </template>
     </el-table-column>
 
+    
+
     <el-table-column
       label="姓名"
       width="180">
@@ -117,6 +127,25 @@
         </el-popover>
       </template>
     </el-table-column>
+
+<el-table-column
+      label="邮箱地址"
+      width="180">
+      <template slot-scope="scope">
+        <!-- <i class="el-icon-time"></i> -->
+        <span style="margin-left: 10px">{{ scope.row.email }}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column
+      label="注册时间"
+      width="180">
+      <template slot-scope="scope">
+        <!-- <i class="el-icon-time"></i> -->
+        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+      </template>
+    </el-table-column>
+
     <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button
@@ -158,6 +187,9 @@
                 <el-form-item label="地址:">
                   <el-input v-model="update.address"  placeholder="请输入家庭住址"></el-input>
                 </el-form-item>
+                <el-form-item label="邮箱:">
+                  <el-input v-model="update.email"  placeholder="请输入邮箱住址"></el-input>
+                </el-form-item>
 
               </el-form>
             </div>
@@ -179,6 +211,9 @@
                 </el-form-item>
                 <el-form-item label="地址:">
                   <el-input v-model="update.address"  placeholder="请输入家庭住址" :readonly="true" ></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱:">
+                  <el-input v-model="update.email"  placeholder="请输入邮箱" :readonly="true" ></el-input>
                 </el-form-item>
                 
                 <el-button @click="update.innerVisible = false" style="margin-left:320px;">取 消</el-button>
@@ -203,14 +238,22 @@
     @next-click="next"     下一页事件   
     @prev-click="prev"     上一页事件
     @current-change="fenye"   当前页事件-->
-<el-pagination
-  background
-  layout="prev, pager, next"
-  :total="total"
-  :current-page.sync="page"
-  
-  @current-change="selectBy"
-  >
+    <!-- <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="total"
+      :current-page.sync="page"
+      
+      @current-change="selectBy"
+      > -->
+
+      <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="total"
+      :current-page.sync="page"
+      @current-change="selectBy"
+      >
 </el-pagination>
 
   </div>
@@ -235,7 +278,8 @@ export default {
           username:'',
           password:'',
           name:'',
-          address:''
+          address:'',
+          email:''
         },
 
         outerVisible: false,
@@ -244,15 +288,16 @@ export default {
           username:'',
           password:'',
           name:'',
-          address:''
+          address:'',
+          email:''
         },
 
         tableData:[],
         selectByName:'',
-        total:'',
+        total:0,
 
         size:10,
-        page:''
+        page:0,
       }
     },
     methods: {
@@ -262,6 +307,7 @@ export default {
       * 修改用户数据
       */
       handleEdit(index, row) {
+        this.update.email=row.email;
         this.update.id=row.id;
         this.update.username=row.username;
         this.update.password=row.password;
@@ -271,6 +317,9 @@ export default {
       },
 
       updateUser(){
+        var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+
+
           if(this.update.username === ''){
             alert("账号不能出现空");
           }else if( this.update.password === ''){
@@ -279,7 +328,17 @@ export default {
             alert("姓名不能为空");
           }else if(this.update.address===''){
             alert("地址不能为空");
-          }else{
+          }else  if (this.update.email ===''){
+          this.$message({
+                        message: '邮箱格式不正确',
+                    })
+        }else if(!regEmail.test(this.update.email)) {
+                    this.$message({
+                        message: '邮箱格式不正确',
+                    })
+        }
+          
+          else{
 
              this.$axios
             .put(`/api/updateUser`,this.update)
@@ -384,6 +443,14 @@ export default {
         .then((response) => {
           this.tableData = response.data
           this.selectSize=response.data.length;
+          if(response.data.msg === "token verify fail"){
+            this.$message({
+            message: "token验证失败,请重新登录",
+            type: "error",
+          });
+          this.$router.push("/login");
+          }
+          console.log("aaa",response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -399,20 +466,42 @@ export default {
       * 添加新的用户
       */
 
+    
      insertUser(){
+       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+
+
        if(this.form.username === ''){
-            alert("账号不能出现空");
+            this.$message({
+                        message: '账号不能为空',
+                    })
           }else if( this.form.password === ''){
-            alert("密码不能为空");
+            this.$message({
+                        message: '密码不能为空',
+                    })
           }else if( this.form.name === ''){
-            alert("姓名不能为空");
+            this.$message({
+                        message: '姓名不能为空',
+                    })
           }else if(this.form.address===''){
-            alert("地址不能为空");
-          }else{
+            this.$message({
+                        message: '地址不能为空',
+                    })
+          }else if(this.form.email===''){
+            this.$message({
+                        message: '邮箱不能为空',
+                    })
+          }else if(!regEmail.test(this.form.email)) {
+                    this.$message({
+                        message: '邮箱格式不正确',
+                    })
+        }
+          
+          else{
          this.$axios
-       .post(`/api/insertUser`,this.form)
-        .then((response) => {
-          if(response.data.ins==="have"){
+          .post(`/api/insertUser`,this.form)
+          .then((response) => {
+           if(response.data.ins==="have"){
             alert("添加成功");
             this.select();
             this.selectBy();
@@ -422,7 +511,8 @@ export default {
             this.form.username='',
             this.form.password='',
             this.form.name='',
-            this.form.address=''
+            this.form.address='',
+            this.form.email=''
             
           }else{
             alert("添加失败");
@@ -443,28 +533,6 @@ export default {
      }
 
 
-
-
-     /**
-      * 分页功能
-      */
-
-    // fenye(){
-    //   var begin=this.size*(this.page-1);
-    //   this.$axios
-    //    .get(`/api/pageSelect?begin=${begin}&size=${this.size}`)
-    //     .then((response) => {
-    //       this.tableData = response.data
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       this.$message({
-    //         message: "网络开小差了",
-    //         type: "error",
-    //       });
-    //     });
-
-    // }
      
     
      

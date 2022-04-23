@@ -42,7 +42,8 @@ const routes = [
         path: '/jump2',
         component: () => import('../views/Page2.vue'),
         meta: { title: ['数据管理', '数据管理2'], auth: true }
-      }
+      },
+
     ]
   }
 ]
