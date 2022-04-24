@@ -66,8 +66,27 @@ export default {
   },
   methods:{
     exit(){
-       localStorage.removeItem('token');
-       location.reload();
+
+      
+        this.$confirm('确定要退出本次登录吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          
+          this.$message({
+            type: 'success',
+            message: '退出成功!' 
+          });
+          localStorage.removeItem('token');
+          location.reload();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
+      
 
     },
 

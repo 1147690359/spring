@@ -52,19 +52,19 @@
 
                 <el-form :inline="true"  class="demo-form-inline">
                 <el-form-item label="账号: ">
-                  <el-input v-model="form.username" placeholder="请输入想要添加的账号" :readonly="true" ></el-input>
+                  <el-input v-model="form.username" placeholder="请输入想要添加的账号" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="密码:">
-                  <el-input v-model="form.password" placeholder="请输入密码" :readonly="true" ></el-input>
+                  <el-input v-model="form.password" placeholder="请输入密码" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="姓名:">
-                  <el-input v-model="form.name"  placeholder="请输入姓名" :readonly="true" ></el-input>
+                  <el-input v-model="form.name"  placeholder="请输入姓名" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="地址:">
-                  <el-input v-model="form.address"  placeholder="请输入家庭住址" :readonly="true" ></el-input>
+                  <el-input v-model="form.address"  placeholder="请输入家庭住址" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱:">
-                  <el-input v-model="form.email"  placeholder="请输入邮箱" :readonly="true" ></el-input>
+                  <el-input v-model="form.email"  placeholder="请输入邮箱" :disabled="true" ></el-input>
                 </el-form-item>
                 
                 <el-button @click="innerVisible = false" style="margin-left:320px;">取 消</el-button>
@@ -77,7 +77,7 @@
               </el-dialog>
           <div slot="footer" class="dialog-footer">
             <el-button @click="outerVisible = false">取 消</el-button>
-            <el-button type="primary" @click="innerVisible = true">提交</el-button>
+            <el-button type="primary" @click="insertaaa">提交</el-button>
           </div>
         </el-dialog>
 
@@ -201,19 +201,19 @@
 
               <el-form :inline="true"  class="demo-form-inline">
                 <el-form-item label="账号: ">
-                  <el-input v-model="update.username" placeholder="请输入想要添加的账号" :readonly="true" ></el-input>
+                  <el-input v-model="update.username" placeholder="请输入想要添加的账号" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="密码:">
-                  <el-input v-model="update.password" placeholder="请输入密码" :readonly="true" ></el-input>
+                  <el-input v-model="update.password" placeholder="请输入密码" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="姓名:">
-                  <el-input v-model="update.name"  placeholder="请输入姓名" :readonly="true" ></el-input>
+                  <el-input v-model="update.name"  placeholder="请输入姓名" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="地址:">
-                  <el-input v-model="update.address"  placeholder="请输入家庭住址" :readonly="true" ></el-input>
+                  <el-input v-model="update.address"  placeholder="请输入家庭住址" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱:">
-                  <el-input v-model="update.email"  placeholder="请输入邮箱" :readonly="true" ></el-input>
+                  <el-input v-model="update.email"  placeholder="请输入邮箱" :disabled="true" ></el-input>
                 </el-form-item>
                 
                 <el-button @click="update.innerVisible = false" style="margin-left:320px;">取 消</el-button>
@@ -226,7 +226,7 @@
             </el-dialog>
           <div slot="footer" class="dialog-footer">
             <el-button @click="update.outerVisible = false">取 消</el-button>
-            <el-button type="primary" @click="update.innerVisible = true">提交</el-button>
+            <el-button type="primary" @click="inner">提交</el-button>
           </div>
    </el-dialog>
 
@@ -238,14 +238,6 @@
     @next-click="next"     下一页事件   
     @prev-click="prev"     上一页事件
     @current-change="fenye"   当前页事件-->
-    <!-- <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="total"
-      :current-page.sync="page"
-      
-      @current-change="selectBy"
-      > -->
 
       <el-pagination
       background
@@ -306,6 +298,8 @@ export default {
      /**
       * 修改用户数据
       */
+
+     
       handleEdit(index, row) {
         this.update.email=row.email;
         this.update.id=row.id;
@@ -315,19 +309,27 @@ export default {
         this.update.address=row.address;
         this.update.outerVisible=true;
       },
-
-      updateUser(){
+      inner(){
         var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
 
+
           if(this.update.username === ''){
-            alert("账号不能出现空");
+            this.$message({
+                        message: '账号不能为空',
+                    })
           }else if( this.update.password === ''){
-            alert("密码不能为空");
+            this.$message({
+                        message: '密码不能为空',
+                    })
           }else if( this.update.name === ''){
-            alert("姓名不能为空");
-          }else if(this.update.address===''){
-            alert("地址不能为空");
+            this.$message({
+                        message: '姓名不能为空',
+                    })
+          }else if(this.update.address === ''){
+            this.$message({
+                        message: '地址不能为空',
+                    })
           }else  if (this.update.email ===''){
           this.$message({
                         message: '邮箱格式不正确',
@@ -336,28 +338,37 @@ export default {
                     this.$message({
                         message: '邮箱格式不正确',
                     })
+        }else{
+                this.update.innerVisible = true;
         }
-          
-          else{
+
+      },
+
+      updateUser(){
 
              this.$axios
             .put(`/api/updateUser`,this.update)
             .then((response) => {
               if(response.data.update==="have"){
-                alert("修改成功");
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                });
                 this.select();
                 this.selectBy();
                 this.update.outerVisible=false;
                 this.update.innerVisible=false;
               }else {
-                alert("修改失败");
+                this.$message({
+                        message: '修改失败，系统出现问题了，请联系管理员',
+                    })
               }   
             })
             .catch((error) => {
               alert(error+"系统出错了，请联系开发人员");
               
             });  
-          }
+          
         
       },
 
@@ -375,28 +386,31 @@ export default {
            
 
 
-            if(this.selectSize == 1)
-            {
-                 this.page=this.page-1;
-            }
-            // this.select();
-            
-             alert("删除成功");
+                if(this.selectSize == 1)
+                {
+                    this.page=this.page-1;
+                }
+                // this.select();
+                
+                this.$message({
+                      message: '删除成功',
+                      type: 'success'
+                    });
 
-             this.select();
-              this.selectBy();
+                  this.select();
+                  this.selectBy();
 
-          }else if(response.data.del==="null"){
-             if(this.selectSize == 0){
-                 this.page=this.page-1;
-            }
-            alert("删除失败，该数据已经被删除");
+              }else if(response.data.del==="null"){
+                if(this.selectSize == 0){
+                    this.page=this.page-1;
+                }
+                this.$message.error('该数据已经被删除了');
 
-             this.select();
-              this.selectBy();
-          }
+                this.select();
+                  this.selectBy();
+              }
           else {
-            alert("系统出错啦，请联系管理员");
+             this.$message.error('出错了哦，请联系工作人员');
           }      
         })
         .catch((error) => {
@@ -466,9 +480,8 @@ export default {
       * 添加新的用户
       */
 
-    
-     insertUser(){
-       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+    insertaaa(){
+      var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
 
        if(this.form.username === ''){
@@ -495,14 +508,18 @@ export default {
                     this.$message({
                         message: '邮箱格式不正确',
                     })
-        }
-          
-          else{
+          } else{
+            this.innerVisible = true
+          }
+    },
+    
+     insertUser(){
+       
          this.$axios
           .post(`/api/insertUser`,this.form)
           .then((response) => {
            if(response.data.ins==="have"){
-            alert("添加成功");
+            this.$message({message: '恭喜你，这是一条成功消息' });
             this.select();
             this.selectBy();
             this.outerVisible=false;
@@ -515,7 +532,9 @@ export default {
             this.form.email=''
             
           }else{
-            alert("添加失败");
+            this.$message({
+                        message: '添加失败',
+                    })
           }
           
         })
@@ -528,14 +547,6 @@ export default {
         });
 
        }
-
-       
-     }
-
-
-     
-    
-     
 
     },
     mounted(){
