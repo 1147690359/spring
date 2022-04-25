@@ -43,6 +43,17 @@ const routes = [
         component: () => import('../views/Page2.vue'),
         meta: { title: ['数据管理', '数据管理2'], auth: true }
       },
+      {
+        path: '/jump3',
+        component: () => import('../views/Page3.vue'),
+        meta: { title: ['数据管理', '数据管理2'], auth: true }
+      },
+      {
+        path: '/jump4',
+        component: () => import('../views/Page4.vue'),
+        meta: { title: ['数据管理', '数据管理2'], auth: true }
+      },
+      
 
     ]
   }

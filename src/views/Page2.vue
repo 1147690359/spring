@@ -1,122 +1,117 @@
 <template>
-  <div>
+<div>
+  <el-upload
+  action="#"
+  
+  list-type="picture-card"
+  :auto-upload="false"
+  :on-change="getFile"
+  >
+  
+    <i slot="default" class="el-icon-plus"></i>
+    <div slot="file" slot-scope="{file}">
+      <img
+        class="el-upload-list__item-thumbnail"
+        :src="file.url" alt=""
+      >
+      <span class="el-upload-list__item-actions">
+        <span
+          class="el-upload-list__item-preview"
+          @click="handlePictureCardPreview(file)"
+        >
+          <i class="el-icon-zoom-in"></i>
+        </span>
+        <span
+          v-if="!disabled"
+          class="el-upload-list__item-delete"
+          @click="handleDownload(file)"
+        >
+          <i class="el-icon-download"></i>
+        </span>
+        <span
+          v-if="!disabled"
+          class="el-upload-list__item-delete"
+          @click="handleRemove(file)"
+        >
+          <i class="el-icon-delete"></i>
+        </span>
+      </span>
+      <el-button @click="imageToBase64(file)">图片转 </el-button>
+    </div>
+  </el-upload>
 
-    <el-upload
+  <el-dialog :visible.sync="dialogVisible">
+    <img width="100%" :src="dialogImageUrl" alt="">
+  </el-dialog>
+  
+   <div>
+     <h3>测试</h3>
+     <img width="100%" :src="resaa">
+      </div>
 
-        class=""
+</div>
 
-        action=""
-
-        :on-success="handleSuccess"
-
-        :http-request="uploadFile"
-
-        multiple
-
-        :limit="3"
-
-        :file-list="fileList">
-
-      <el-button size="small" type="primary">点击上传</el-button>
-
-    </el-upload>
-
-    <img :src="imgUrl"/>
-  </div>
  </template>
 
-// js部分
+
 
 <script>
+  export default {
+    data() {
+      return {
+        dialogImageUrl: '',
+        dialogVisible: false,
+        disabled: false,
+        iconBase64:'',
+        resaa:''
+      };
+    },
+    methods: {
 
-const OSS = require('ali-oss');
+      handleRemove(file) {
+        console.log(file);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      handleDownload(file) {
+        console.log(file);
+        this.getBase64(file);
 
-const client= new OSS({
+      },
 
-  accessKeyId: '*****',  // 查看你自己的阿里云KEY
+     
 
-  accessKeySecret: '****', // 查看自己的阿里云KEYSECRET
+      // 获取图片转base64
 
-  bucket: 'hs-image-oss', // 你的 OSS bucket 名称
+ getBase64(file) {
+      return new Promise(function(resolve, reject) {
+        let reader = new FileReader();
+        let imgResult = "";
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+          imgResult = reader.result;
+        };
+        reader.onerror = function(error) {
+          reject(error);
+        };
+        reader.onloadend = function() {
+          resolve(imgResult);
+        };
+      });
+ },
 
-  region: 'oss-cn-beijing', // bucket 所在地址，我的是 华北2 北京
-
-  // cname: true // 开启自定义域名上传
-
-  // endpoint:"file.xxxx.live" // 自己的域名
-
-});
-
-export default {
-
-  props: {
-
-    msg: String
-
-  },
-
-  data () {
-
-    return {
-
-      fileList: [],
-
-      imgUrl: ''
-
-    }
-
-  },
-
-  methods: {
-
-    async uploadFile (options) {
-
-      try {
-
-        let file = options.file; // 拿到 file
-
-        let fileName = file.name.substr(0,file.name.lastIndexOf('.'))
-
-        let date = new Date().getTime()
-
-        let fileNames = `${date}_${fileName}` // 拼接文件名，保证唯一，这里使用时间戳+原文件名
-
-        // 上传文件,这里是上传到OSS的 uploads文件夹下
-
-        client.put('banner/' + fileNames, file).then(res=>{
-
-          if (res.res.statusCode === 200) {
-
-            options.onSuccess(res)
-
-          }else {
-
-            options.onError("上传失败")
-
-          }
-
-        })
-
-      }catch (e) {
-
-        options.onError("上传失败")
-
-      }
-
+     getFile(file, fileList) {
+     console.log(file.raw);
+     this.getBase64(file.raw).then(res => {
+      console.log(res);
+      this.resaa=res;
+      });
     },
 
-    // 上传成功回调函数
-
-    handleSuccess (res) {
-
-      console.log(res.url)
-
-      this.imgUrl = res.url
 
     }
-
   }
-
-}
-
 </script>
+

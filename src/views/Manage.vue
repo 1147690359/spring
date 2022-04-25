@@ -29,7 +29,15 @@
 
             <el-menu-item index="jump2">
               <i class="el-icon-menu"></i>
-              <span slot="title">数据管理2</span>
+              <span slot="title">测试2</span>
+            </el-menu-item>
+            <el-menu-item index="jump3">
+              <i class="el-icon-menu"></i>
+              <span slot="title">测试3</span>
+            </el-menu-item>
+            <el-menu-item index="jump4">
+              <i class="el-icon-menu"></i>
+              <span slot="title">测试4</span>
             </el-menu-item>
           </el-submenu>
 

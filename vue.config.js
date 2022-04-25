@@ -15,6 +15,7 @@ module.exports = defineConfig({
 //代理
 proxy: {
     "/api": {
+
         target: "http://localhost:1022", //目标代理服务器地址
         changeOrigin: true,  //允许跨域
         ws: true,

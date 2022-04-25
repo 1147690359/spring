@@ -24,6 +24,25 @@
         <el-dialog title="添加新用户" :visible.sync="outerVisible"  width="600px">
             <div style="padding-top:20px; padding-left:15px;">
               <el-form :inline="true"  class="demo-form-inline">
+                <el-form-item label="头像:">
+                  <el-upload
+                            list-type="picture-card"
+                              class="avatar-uploader"
+                              action="#"
+                              :show-file-list="false"
+                              :on-change="onChange"
+
+                  >
+
+                              <el-avatar
+                                v-if="img.avatar"
+                                shape="square"
+                                :size="150"
+                                :src="img.avatar"
+                              ></el-avatar>
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                </el-form-item>
                 <el-form-item label="账号:">
                   <el-input v-model="form.username" placeholder="请输入想要添加的账号"  ></el-input>
                 </el-form-item>
@@ -83,9 +102,17 @@
 
       </div>
        <el-table
-    :data="tableData"
-    style="width: 100%">
+        :data="tableData"
+        style="width: 100%;">
+
+    <el-table-column prop="avatar" label="头像" width="100" align="center" >
+          <template slot-scope="scope">
+            <el-avatar style="margin-left: 10px" :src="scope.row.baseImg"></el-avatar>
+          </template>
+    </el-table-column>
+
     <el-table-column
+      align="center"
       label="id"
       width="100">
       <template slot-scope="scope">
@@ -95,6 +122,7 @@
     </el-table-column>
 
     <el-table-column
+    align="center"
       label="用户名"
       width="180">
       <template slot-scope="scope">
@@ -104,6 +132,7 @@
     </el-table-column>
 
     <el-table-column
+    align="center"
       label="密码"
       width="180">
       <template slot-scope="scope">
@@ -115,8 +144,9 @@
     
 
     <el-table-column
+    align="center"
       label="姓名"
-      width="180">
+      width="80">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <p>姓名: {{ scope.row.name }}</p>
@@ -129,6 +159,7 @@
     </el-table-column>
 
 <el-table-column
+       align="center"
       label="邮箱地址"
       width="180">
       <template slot-scope="scope">
@@ -138,6 +169,7 @@
     </el-table-column>
 
     <el-table-column
+       align="center"
       label="注册时间"
       width="180">
       <template slot-scope="scope">
@@ -146,7 +178,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="操作">
+    <el-table-column label="操作" align="center">
       <template slot-scope="scope">
         <el-button
           size="mini"
@@ -290,9 +322,53 @@ export default {
 
         size:10,
         page:0,
+        img:{
+            iconBase64:'',
+            resaa:'' ,   
+            file:'',
+            gender: '',
+            avatar: '',
+        }
       }
     },
     methods: {
+
+   /**
+    * img 上传  转base64
+    */
+   onChange(file) {
+      console.log(file);
+      this.img.avatar = window.webkitURL.createObjectURL(file.raw);
+
+
+      console.log(file.raw);
+     this.getBase64(file.raw).then(res => {
+      console.log(res);
+      this.imgresaa=res;
+      });
+    },
+
+     getBase64(file) {
+      return new Promise(function(resolve, reject) {
+        let reader = new FileReader();
+        let imgResult = "";
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+          imgResult = reader.result;
+        };
+        reader.onerror = function(error) {
+          reject(error);
+        };
+        reader.onloadend = function() {
+          resolve(imgResult);
+        };
+      });
+ },
+
+
+
+
+
 
 
      /**
