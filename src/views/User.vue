@@ -24,25 +24,24 @@
         <el-dialog title="添加新用户" :visible.sync="outerVisible"  width="600px">
             <div style="padding-top:20px; padding-left:15px;">
               <el-form :inline="true"  class="demo-form-inline">
-                <el-form-item label="头像:">
+                <el-form-item label="头像:" style="display: inline-block" >
                   <el-upload
                             list-type="picture-card"
                               class="avatar-uploader"
                               action="#"
                               :show-file-list="false"
                               :on-change="onChange"
-
-                  >
+                             >
 
                               <el-avatar
-                                v-if="img.avatar"
+                                v-if="img.imgurl"
                                 shape="square"
                                 :size="150"
-                                :src="img.avatar"
+                                :src="img.imgurl"
                               ></el-avatar>
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
-                </el-form-item>
+                </el-form-item><br>
                 <el-form-item label="账号:">
                   <el-input v-model="form.username" placeholder="请输入想要添加的账号"  ></el-input>
                 </el-form-item>
@@ -313,7 +312,8 @@ export default {
           password:'',
           name:'',
           address:'',
-          email:''
+          email:'',
+          baseImg:''
         },
 
         tableData:[],
@@ -327,7 +327,8 @@ export default {
             resaa:'' ,   
             file:'',
             gender: '',
-            avatar: '',
+            imgurl: '',
+            fileavatar:[]
         }
       }
     },
@@ -337,14 +338,21 @@ export default {
     * img 上传  转base64
     */
    onChange(file) {
+     this.img.fileavatar=file;
+
+     
+
       console.log(file);
-      this.img.avatar = window.webkitURL.createObjectURL(file.raw);
+      console.log("imgfileava",this.img.fileavatar);
+      this.img.imgurl = window.webkitURL.createObjectURL(file.raw);
+      
 
 
-      console.log(file.raw);
+      console.log("imgggg",this.img.imgurl);
      this.getBase64(file.raw).then(res => {
       console.log(res);
-      this.imgresaa=res;
+      // this.img.resaa=res;
+      this.form.baseImg=res;
       });
     },
 
@@ -363,7 +371,30 @@ export default {
           resolve(imgResult);
         };
       });
- },
+    },
+
+    upload(){
+      
+      alert("成功时的函数"+this.img.fileavatar);
+
+      this.$axios
+       .post(`/api/upload`,this.img.fileavatar)
+        .then((response) => {
+          alert("上传成功");
+
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$message({
+            message: "网络开小差了",
+            type: "error",
+          });
+        });
+
+
+
+    },
+ 
 
 
 
@@ -390,23 +421,23 @@ export default {
 
 
 
-          if(this.update.username === ''){
+          if( !this.update.username){
             this.$message({
                         message: '账号不能为空',
                     })
-          }else if( this.update.password === ''){
+          }else if( !this.update.password){
             this.$message({
                         message: '密码不能为空',
                     })
-          }else if( this.update.name === ''){
+          }else if( !this.update.name){
             this.$message({
                         message: '姓名不能为空',
                     })
-          }else if(this.update.address === ''){
+          }else if(!this.update.address){
             this.$message({
                         message: '地址不能为空',
                     })
-          }else  if (this.update.email ===''){
+          }else  if (!this.update.email){
           this.$message({
                         message: '邮箱格式不正确',
                     })
@@ -560,23 +591,23 @@ export default {
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
 
-       if(this.form.username === ''){
+       if(!this.form.username){
             this.$message({
                         message: '账号不能为空',
                     })
-          }else if( this.form.password === ''){
+          }else if( !this.form.password){
             this.$message({
                         message: '密码不能为空',
                     })
-          }else if( this.form.name === ''){
+          }else if( !this.form.name){
             this.$message({
                         message: '姓名不能为空',
                     })
-          }else if(this.form.address===''){
+          }else if(!this.form.address){
             this.$message({
                         message: '地址不能为空',
                     })
-          }else if(this.form.email===''){
+          }else if(!this.form.email){
             this.$message({
                         message: '邮箱不能为空',
                     })
@@ -590,17 +621,21 @@ export default {
     },
     
      insertUser(){
+      //  this.upload();
        
          this.$axios
           .post(`/api/insertUser`,this.form)
           .then((response) => {
            if(response.data.ins==="have"){
             this.$message({message: '恭喜你，这是一条成功消息' });
+
             this.select();
             this.selectBy();
             this.outerVisible=false;
             this.innerVisible=false;
             
+            this.img.imgurl='',
+            this.form.baseImg='',
             this.form.username='',
             this.form.password='',
             this.form.name='',
