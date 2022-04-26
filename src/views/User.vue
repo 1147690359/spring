@@ -106,7 +106,8 @@
 
     <el-table-column prop="avatar" label="头像" width="100" align="center" >
           <template slot-scope="scope">
-            <el-avatar style="margin-left: 10px" :src="scope.row.baseImg"></el-avatar>
+            <!-- <el-avatar style="margin-left: 10px" :src="scope.row.baseImg"></el-avatar> -->
+            <el-avatar style="margin-left: 10px" :src="scope.row.imgUrl"></el-avatar>
           </template>
     </el-table-column>
 
@@ -313,7 +314,8 @@ export default {
           name:'',
           address:'',
           email:'',
-          baseImg:''
+          baseImg:'',
+          imgUrl:null,
         },
 
         tableData:[],
@@ -325,11 +327,13 @@ export default {
         img:{
             iconBase64:'',
             resaa:'' ,   
-            file:'',
+            
             gender: '',
             imgurl: '',
             fileavatar:[]
-        }
+        },
+        file:null,
+        imgUrl:null
       }
     },
     methods: {
@@ -338,22 +342,18 @@ export default {
     * img 上传  转base64
     */
    onChange(file) {
-     this.img.fileavatar=file;
-
      
-
       console.log(file);
-      console.log("imgfileava",this.img.fileavatar);
       this.img.imgurl = window.webkitURL.createObjectURL(file.raw);
+      this.file = new FormData();
+      this.file.append("file", file.raw);
+
       
-
-
-      console.log("imgggg",this.img.imgurl);
-     this.getBase64(file.raw).then(res => {
-      console.log(res);
-      // this.img.resaa=res;
-      this.form.baseImg=res;
-      });
+    //转成 base64 的写法
+    //  this.getBase64(file.raw).then(res => {
+    //   console.log(res);
+    //   this.form.baseImg=res;
+    //   });
     },
 
      getBase64(file) {
@@ -373,14 +373,18 @@ export default {
       });
     },
 
+    //图片上传
     upload(){
       
-      alert("成功时的函数"+this.img.fileavatar);
+      alert("成功时的函数"+this.file);
 
       this.$axios
-       .post(`/api/upload`,this.img.fileavatar)
+       .post("/api/upload",this.file)
         .then((response) => {
-          alert("上传成功");
+          
+          this.imgUrl=response.data.imgUrl;
+          alert("图片上传成功"+this.imgUrl);
+
 
         })
         .catch((error) => {
@@ -621,7 +625,9 @@ export default {
     },
     
      insertUser(){
-      //  this.upload();
+       this.upload();
+       this.form.imgUrl=this.imgUrl;
+      
        
          this.$axios
           .post(`/api/insertUser`,this.form)
