@@ -347,6 +347,7 @@ export default {
       this.img.imgurl = window.webkitURL.createObjectURL(file.raw);
       this.file = new FormData();
       this.file.append("file", file.raw);
+       console.log("this.file",this.file);
 
       
     //转成 base64 的写法
@@ -376,9 +377,9 @@ export default {
     //图片上传
     upload(){
       
-      alert("成功时的函数"+this.file);
 
       this.$axios
+
        .post("/api/upload",this.file)
         .then((response) => {
           
@@ -394,8 +395,6 @@ export default {
             type: "error",
           });
         });
-
-
 
     },
  
@@ -591,9 +590,9 @@ export default {
       * 添加新的用户
       */
 
-    insertaaa(){
+      insertaaa(){
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-
+      
 
        if(!this.form.username){
             this.$message({
@@ -622,10 +621,12 @@ export default {
           } else{
             this.innerVisible = true
           }
+               this.upload();
     },
     
      insertUser(){
-       this.upload();
+
+
        this.form.imgUrl=this.imgUrl;
       
        
