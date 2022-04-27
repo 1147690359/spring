@@ -69,9 +69,14 @@ export default {
 
             const sccessToke=res.data.sccessToke;
             localStorage.setItem('token',sccessToke);
-            
-            
 
+            //登陆成功后给sesson设置username（用户名）
+              window.sessionStorage.setItem('username', this.login.username);
+              //获取后端传过来的图片 赋值给sesson
+              window.sessionStorage.setItem('imgUrl', res.data.imgUrl);
+              
+
+         
             this.$router.push("/manage")
           }else if(res.data.index == "null"){
               alert("账号或者密码不正确");
