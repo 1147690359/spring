@@ -80,6 +80,8 @@ export default {
             this.$router.push("/manage")
           }else if(res.data.index == "null"){
               alert("账号或者密码不正确");
+          }else if(res.data.index == 1) {
+              alert("账号或者密码不正确");
           }else{
             alert("系统出现错误了，请联系开发人员");
           }

@@ -131,17 +131,6 @@
       </template>
     </el-table-column>
 
-    <el-table-column
-    align="center"
-      label="密码"
-      width="180">
-      <template slot-scope="scope">
-        <!-- <i class="el-icon-time"></i> -->
-        <span style="margin-left: 10px">{{ scope.row.password }}</span>
-      </template>
-    </el-table-column>
-
-    
 
     <el-table-column
     align="center"
@@ -208,10 +197,7 @@
             <div style="padding-top:20px; padding-left:15px;">
               <el-form :inline="true"  class="demo-form-inline">
                 <el-form-item label="账号:">
-                  <el-input v-model="update.username" placeholder="请输入想要添加的账号"  ></el-input>
-                </el-form-item>
-                <el-form-item label="密码:">
-                  <el-input v-model="update.password" placeholder="请输入密码" ></el-input>
+                  <el-input v-model="update.username" placeholder="请输入想要修改的账号"  ></el-input>
                 </el-form-item>
                 <el-form-item label="姓名:">
                   <el-input v-model="update.name"  placeholder="请输入姓名"></el-input>
@@ -234,9 +220,6 @@
               <el-form :inline="true"  class="demo-form-inline">
                 <el-form-item label="账号: ">
                   <el-input v-model="update.username" placeholder="请输入想要添加的账号" :disabled="true" ></el-input>
-                </el-form-item>
-                <el-form-item label="密码:">
-                  <el-input v-model="update.password" placeholder="请输入密码" :disabled="true" ></el-input>
                 </el-form-item>
                 <el-form-item label="姓名:">
                   <el-input v-model="update.name"  placeholder="请输入姓名" :disabled="true" ></el-input>
@@ -300,7 +283,7 @@ export default {
           innerVisible: false,
           id:'',
           username:'',
-          password:'',
+          updateUsername:'',
           name:'',
           address:'',
           email:''
@@ -341,13 +324,13 @@ export default {
    /**
     * img 上传  转base64
     */
+   //图片动作 
    onChange(file) {
      
       console.log(file);
       this.img.imgurl = window.webkitURL.createObjectURL(file.raw);
       this.file = new FormData();
       this.file.append("file", file.raw);
-       console.log("this.file",this.file);
 
       
     //转成 base64 的写法
@@ -356,7 +339,7 @@ export default {
     //   this.form.baseImg=res;
     //   });
     },
-
+   //转Base64
      getBase64(file) {
       return new Promise(function(resolve, reject) {
         let reader = new FileReader();
@@ -374,18 +357,18 @@ export default {
       });
     },
 
-    //图片上传
+    //图片上传-->上传的是图片的存放的位置
     upload(){
       
-
-      this.$axios
-
+      if(this.file){
+        this.$axios
        .post("/api/upload",this.file)
         .then((response) => {
           
           this.imgUrl=response.data.imgUrl;
-          alert("图片上传成功"+this.imgUrl);
-
+          this.$message({
+          message: '恭喜你，图片上传成功了哦',
+        });
 
         })
         .catch((error) => {
@@ -396,29 +379,32 @@ export default {
           });
         });
 
+      }else {
+        this.$message({
+            message: "您没有上传头像哦",
+          });
+      }
+
+      
+
     },
  
-
-
-
-
-
-
 
      /**
       * 修改用户数据
       */
 
-     
+     //获取值
       handleEdit(index, row) {
         this.update.email=row.email;
         this.update.id=row.id;
+        this.update.updateUsername=row.username;
         this.update.username=row.username;
-        this.update.password=row.password;
         this.update.name=row.name;
         this.update.address=row.address;
         this.update.outerVisible=true;
       },
+      //不能为空的校验
       inner(){
         var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
@@ -428,10 +414,7 @@ export default {
             this.$message({
                         message: '账号不能为空',
                     })
-          }else if( !this.update.password){
-            this.$message({
-                        message: '密码不能为空',
-                    })
+          
           }else if( !this.update.name){
             this.$message({
                         message: '姓名不能为空',
@@ -453,7 +436,7 @@ export default {
         }
 
       },
-
+     //修改的事件
       updateUser(){
 
              this.$axios
@@ -468,7 +451,9 @@ export default {
                 this.selectBy();
                 this.update.outerVisible=false;
                 this.update.innerVisible=false;
-              }else {
+              } else if(response.data.equ === "equ"){
+                alert("用户名重复了");
+              } else {
                 this.$message({
                         message: '修改失败，系统出现问题了，请联系管理员',
                     })
@@ -590,9 +575,9 @@ export default {
       * 添加新的用户
       */
 
-      insertaaa(){
+    insertaaa(){
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-      
+
 
        if(!this.form.username){
             this.$message({
@@ -620,21 +605,22 @@ export default {
                     })
           } else{
             this.innerVisible = true
+            this.upload();
           }
-               this.upload();
     },
     
      insertUser(){
-
-
+       
        this.form.imgUrl=this.imgUrl;
       
        
          this.$axios
           .post(`/api/insertUser`,this.form)
           .then((response) => {
-           if(response.data.ins==="have"){
-            this.$message({message: '恭喜你，这是一条成功消息' });
+            if(response.data.equ === "equ") {
+               alert("账号已经被注册了...")
+           }else if(response.data.ins==="have"){
+            this.$message({message: '恭喜你，添加成功了哦' });
 
             this.select();
             this.selectBy();
