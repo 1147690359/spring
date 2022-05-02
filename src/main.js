@@ -14,15 +14,42 @@ Vue.prototype.$axios = axios;
 
 //添加请求拦截器，在请求头中加token
 axios.interceptors.request.use(
-  config => {
-      if (localStorage.getItem('token')) {
-          config.headers.token = localStorage.getItem('token');
-      }
-      return config;
+  request => {
+
+    if (localStorage.getItem("token") != null && localStorage.getItem("token") != '') {
+        request.headers = {
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+      // }
+    }
+    return Promise.resolve(request)
   },
   error => {
-      return Promise.reject(error);
+    return Promise.reject(error)
+  
   });
+
+  router.beforeEach((to, from, next) => {
+    if (to.path === '/login') {
+      if (localStorage.getItem("token")) {
+        next({ path: "/manage" });
+      } else {
+        next();
+      }
+    } else {
+      if (to.matched.some(record => record.meta.auth)) {
+        if (localStorage.getItem("token")) {
+          next();
+        } else {
+          next({ path: "/" });
+        }
+  
+      } else {
+        next();
+      }
+    }
+  
+  })
 
 new Vue({
   router,

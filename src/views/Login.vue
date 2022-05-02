@@ -55,36 +55,33 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
+   async onSubmit() {
+     
+     
       if (this.login.username=="") {
         alert("账号不能为空");
       }else if (this.login.password=="") {
         alert("密码不能为空");
       }else{
+      
+      await this.setimg();
+
+
         this.$axios
-        .post("/api/index", this.login)
+        .get(
+              `http://localhost:9000/oauth/token?grant_type=password&client_id=bitware_client&client_secret=bitware&scope=all&username=${this.login.username}&password=${this.login.password}`
+            )
         .then((res) => {
           
-          if (res.data.index == "have") {
+        
 
-            const sccessToke=res.data.sccessToke;
-            localStorage.setItem('token',sccessToke);
-
-            //登陆成功后给sesson设置username（用户名）
-              window.sessionStorage.setItem('username', this.login.username);
-              //获取后端传过来的图片 赋值给sesson
-              window.sessionStorage.setItem('imgUrl', res.data.imgUrl);
-              
-
-         
-            this.$router.push("/manage")
-          }else if(res.data.index == "null"){
-              alert("账号或者密码不正确");
-          }else if(res.data.index == 1) {
-              alert("账号或者密码不正确");
-          }else{
-            alert("系统出现错误了，请联系开发人员");
-          }
+             if (res.data && res.data.access_token) {
+                
+                localStorage.setItem("token", res.data.access_token);
+                console.log(localStorage.getItem("token"))
+                this.$router.push("/manage")
+                this.$message({ message: "登录成功", type: "success" });
+              }
         })
         .catch((error) => {
           console.log(error);
@@ -94,6 +91,23 @@ export default {
       }
         
     },
+     setimg(){
+      this.$axios
+        .post("/api/index",this.login)
+        .then((res) => {
+          //登陆成功后给sesson设置username（用户名）
+              window.sessionStorage.setItem('username', this.login.username);
+              //获取后端传过来的图片 赋值给sesson
+              window.sessionStorage.setItem('imgUrl', res.data.imgUrl);
+              console.log(this.login.username,res.data.imgUrl);
+
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
+        });
+                  
+    }
   },
 };
 </script>
