@@ -69,8 +69,8 @@ export default {
 
         this.$axios
         .get(
-              `http://localhost:9000/oauth/token?grant_type=password&client_id=bitware_client&client_secret=bitware&scope=all&username=${this.login.username}&password=${this.login.password}`
-            )
+            `/tokenApi/oauth/token?grant_type=password&client_id=bitware_client&client_secret=bitware&scope=all&username=${this.login.username}&password=${this.login.password}`
+        )
         .then((res) => {
           
         
@@ -84,8 +84,14 @@ export default {
               }
         })
         .catch((error) => {
-          console.log(error);
-          this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
+          if(error.message === "Request failed with status code 400")
+          {
+            this.$message({ message: "错误代码:400   可能是账号或者密码错误 ", type: "error" });
+          }else{
+            console.log(error);
+            this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
+          }
+          
         });
 
       }

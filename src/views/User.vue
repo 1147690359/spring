@@ -523,14 +523,21 @@ export default {
      select(){
        this.$axios
        .get(`/api/user`)
-        // .get(`/api/user/query1`)
-        // .get(`/api/user/query/${offset}/${this.pageSize}`)
         .then((response) => {
           // this.tableData = response.data;
           this.total = response.data.length;
-
+          
         })
         .catch((error) => {
+          let err="Request failed with status code 401";
+          if(error.message === err){
+            this.$message({
+             message: "token已经过期了 需要重新登录",
+              type: "error",
+              });
+            localStorage.removeItem('token');
+            location.reload();
+          }
           console.log(error);
           this.$message({
             message: "网络开小差了",
@@ -552,13 +559,9 @@ export default {
         .then((response) => {
           this.tableData = response.data
           this.selectSize=response.data.length;
-          if(response.data.msg === "token verify fail"){
-            this.$message({
-            message: "token验证失败,请重新登录",
-            type: "error",
-          });
-          this.$router.push("/login");
-          }
+          
+          
+          
           console.log("aaa",response.data);
         })
         .catch((error) => {

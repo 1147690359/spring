@@ -14,6 +14,15 @@ module.exports = defineConfig({
 // },
 //代理
 proxy: {
+    "/tokenApi": {
+
+        target: "http://localhost:9000", //目标代理服务器地址
+        changeOrigin: true,  //允许跨域
+
+        pathRewrite: {
+            "^/tokenApi": ""
+        }
+    },
     "/api": {
 
         target: "http://localhost:1022", //目标代理服务器地址
@@ -21,7 +30,8 @@ proxy: {
         ws: true,
         pathRewrite: {
             "^/api": ""
-        }
+        },
+        
     }
 }
 },
