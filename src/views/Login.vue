@@ -65,21 +65,22 @@ export default {
       }else{
       
       await this.setimg();
+      await this.number();
 
 
         this.$axios
         .get(
             `/tokenApi/oauth/token?grant_type=password&client_id=bitware_client&client_secret=bitware&scope=all&username=${this.login.username}&password=${this.login.password}`
         )
-        .then((res) => {
+         .then((res) => {
           
         
 
              if (res.data && res.data.access_token) {
                 
                 localStorage.setItem("token", res.data.access_token);
-                console.log(localStorage.getItem("token"))
-                this.$router.push("/manage")
+                console.log(localStorage.getItem("token"));
+                this.$router.push("/manage");
                 this.$message({ message: "登录成功", type: "success" });
               }
         })
@@ -97,7 +98,9 @@ export default {
       }
         
     },
-     setimg(){
+
+    /**获取该账号的 用户名和 头像 */
+    async setimg(){
       this.$axios
         .post("/api/index",this.login)
         .then((res) => {
@@ -113,6 +116,19 @@ export default {
           this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
         });
                   
+    },
+    async number(){
+       this.$axios
+        .get("/api/number")
+        .then((res) => {
+          //登陆成功后给sesson设置username（用户名）
+              window.sessionStorage.setItem('number', res.data.num);
+              
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
+        });
     }
   },
 };

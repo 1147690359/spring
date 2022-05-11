@@ -16,7 +16,8 @@ module.exports = defineConfig({
 proxy: {
     "/tokenApi": {
 
-        target: "http://localhost:9000", //目标代理服务器地址
+        target: "http://192.168.1.38:9000", //目标代理服务器地址
+        // target: "http://localhost:9000", //目标代理服务器地址
         changeOrigin: true,  //允许跨域
 
         pathRewrite: {

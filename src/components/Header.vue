@@ -78,6 +78,7 @@ export default {
           });
           localStorage.removeItem('token');
           location.reload();
+          sessionStorage.clear()
         }).catch(() => {
           this.$message({
             type: 'info',

@@ -39,8 +39,8 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-user-solid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
+                                    <div class="grid-num">{{user.number}}</div>
+                                    <div>本月访问量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -124,9 +124,14 @@ export default {
   },
     data() {
         return {
+            num:{
+                number:[],
+                date:[],
+            },
             user:{
               username:window.sessionStorage.getItem("username"),
               imgUrl:window.sessionStorage.getItem("imgUrl"),
+              number:window.sessionStorage.getItem("number"),
             },
             todoList: [
                 {
@@ -154,36 +159,7 @@ export default {
                     status: true
                 }
             ],
-            data: [
-                {
-                    name: '2018/09/04',
-                    value: 1083
-                },
-                {
-                    name: '2018/09/05',
-                    value: 941
-                },
-                {
-                    name: '2018/09/06',
-                    value: 1139
-                },
-                {
-                    name: '2018/09/07',
-                    value: 816
-                },
-                {
-                    name: '2018/09/08',
-                    value: 327
-                },
-                {
-                    name: '2018/09/09',
-                    value: 228
-                },
-                {
-                    name: '2018/09/10',
-                    value: 1065
-                }
-            ],
+
             options: {
                 type: 'bar',
                 title: {
@@ -209,7 +185,7 @@ export default {
             options2: {
                 type: 'line',
                 title: {
-                    text: '最近几个月各品类销售趋势图'
+                    text: '最近几个月访问数量趋势图'
                 },
                 labels: ['6月', '7月', '8月', '9月', '10月'],
                 datasets: [
@@ -217,30 +193,27 @@ export default {
                         label: '家电',
                         data: [234, 278, 270, 190, 230]
                     },
-                    {
-                        label: '百货',
-                        data: [164, 178, 150, 135, 160]
-                    },
-                    {
-                        label: '食品',
-                        data: [74, 118, 200, 235, 90]
-                    }
                 ]
             }
         };
     },
-    // created() {
-    //     this.handleListener();
-    //     this.changeDate();
-    // },
-    // activated() {
-    //     this.handleListener();
-    // },
-    // deactivated() {
-    //     window.removeEventListener('resize', this.renderChart);
-    //     bus.$off('collapse', this.handleBus);
-    // },
     methods: {
+
+        number(){    
+            this.$axios
+                .get("/api/numUser")
+                .then((res) => {
+                //登陆成功后给sesson设置username（用户名）
+                res.data;
+                    
+                })
+                .catch((error) => {
+                console.log(error);
+                this.$message({ message: "系统繁忙，请稍后再试", type: "error" });
+                });
+        },
+
+
         changeDate() {
             const now = new Date().getTime();
             this.data.forEach((item, index) => {
@@ -262,7 +235,10 @@ export default {
         //     this.$refs.bar.renderChart();
         //     this.$refs.line.renderChart();
         // }
-    }
+    },
+    mounted(){
+     this.number();
+  }
 };
 </script>
 
